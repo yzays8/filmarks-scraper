@@ -1,20 +1,20 @@
+import argparse
 import requests
 from bs4 import BeautifulSoup
 
 def is_long_review(content_card):
     if content_card.find('span', class_='c-content-card__readmore-review') is None:
         return False
-    else:
-        return True
+    return True
 
 def exist_review(soup):
     if soup.find('div', class_='p-contents-list') is None:
         return False
-    else:
-        return True
+    return True
 
 def get_information(content_card):
     info_dict = {}
+
     if is_long_review(content_card):
         url_moreReview = 'https://filmarks.com' + content_card.find('span', class_='c-content-card__readmore-review').find('a').get('href')
         content_more = BeautifulSoup(requests.get(url_moreReview).text, 'html.parser')
@@ -31,6 +31,7 @@ def get_information(content_card):
         else:
             info_dict['rate'] = float(temp)
         info_dict['review'] = content_card.find('p', class_='c-content-card__review').text
+
     return info_dict
 
 def print_info(info_dict):
@@ -49,7 +50,16 @@ def sort_rate(info_all):
 
 
 if __name__ == '__main__':
-    user_name = input('Username: ')
+    parser = argparse.ArgumentParser(description='Get reviews from filmarks',
+                                     usage='python3 fil.py -u <username> [-n]')
+    parser.add_argument('-n', '--no-asking', help='ask nothing', action='store_true')
+    parser.add_argument('-u', '--username', help='username', required=True)
+    args = parser.parse_args()
+
+    if args.username is not None:
+        user_name = args.username
+    else:
+        user_name = input('Username: ')
     url_user = 'https://filmarks.com/users/' + user_name
     info_all = []
     is_first_page = True
@@ -75,11 +85,12 @@ if __name__ == '__main__':
         i += 1
         url_user = 'https://filmarks.com/users/' + user_name + '?page=' + str(i)
 
-    print('---------------------------------------------------\n')
-    while True:
-        if (want_sort := input('Do you want to sort reviews by rate? y/n: ')) == 'y':
-            for info in sort_rate(info_all):
-                print_info(info)
-            break
-        elif want_sort == 'n':
-            break
+    if args.no_asking is not True:
+        print('---------------------------------------------------\n')
+        while True:
+            if (want_sort := input('Do you want to sort reviews by rate? y/n: ')).lower() in ['y', 'yes']:
+                for info in sort_rate(info_all):
+                    print_info(info)
+                break
+            elif want_sort.lower() in ['n', 'no']:
+                break
