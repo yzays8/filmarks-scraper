@@ -3,34 +3,34 @@ import argparse
 import requests
 from bs4 import BeautifulSoup
 
-def is_long_review(content_card):
+def is_long_review(content_card) -> bool:
     if content_card.find('span', class_='c-content-card__readmore-review') is None:
         return False
     return True
 
-def get_information(content_card):
-    info_dict = {}
+def get_information(content_card) -> dict:
+    info = {}
 
     if is_long_review(content_card):
         url_moreReview = 'https://filmarks.com' + content_card.find('span', class_='c-content-card__readmore-review').find('a').get('href')
         content_more = BeautifulSoup(requests.get(url_moreReview).text, 'html.parser')
-        info_dict['title'] = content_more.find('div', class_='p-timeline-mark__title').text
+        info['title'] = content_more.find('div', class_='p-timeline-mark__title').text
         if (temp:=content_more.find('div', class_='c-rating__score').text) == '-':
-            info_dict['rate'] = -1
+            info['rate'] = -1
         else:
-            info_dict['rate'] = float(temp)
-        info_dict['review'] = content_more.find('div', class_='p-mark__review').text
+            info['rate'] = float(temp)
+        info['review'] = content_more.find('div', class_='p-mark__review').text
     else:
-        info_dict['title'] = content_card.find('h3', class_='c-content-card__title').text
+        info['title'] = content_card.find('h3', class_='c-content-card__title').text
         if (temp:=content_card.find('div', class_='c-rating__score').text) == '-':
-            info_dict['rate'] = -1
+            info['rate'] = -1
         else:
-            info_dict['rate'] = float(temp)
-        info_dict['review'] = content_card.find('p', class_='c-content-card__review').text
+            info['rate'] = float(temp)
+        info['review'] = content_card.find('p', class_='c-content-card__review').text
 
-    return info_dict
+    return info
 
-def print_info(info):
+def print_info(info: dict) -> dict:
     print('Title: ' + info['title'])
     if info['rate'] == -1:
         print('Rate: -')
@@ -41,7 +41,7 @@ def print_info(info):
     else:
         print('Review: ' + info['review'] + '\n')
 
-def sort_rate(info_all):
+def sort_rate(info_all: list) -> list:
     return sorted(info_all, key=lambda x: x['rate'])
 
 
