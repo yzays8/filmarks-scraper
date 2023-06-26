@@ -1,14 +1,10 @@
+import sys
 import argparse
 import requests
 from bs4 import BeautifulSoup
 
 def is_long_review(content_card):
     if content_card.find('span', class_='c-content-card__readmore-review') is None:
-        return False
-    return True
-
-def exist_review(soup):
-    if soup.find('div', class_='p-contents-list') is None:
         return False
     return True
 
@@ -65,23 +61,27 @@ if __name__ == '__main__':
     is_first_page = True
     i = 1
     while True:
-        res = requests.get(url_user)
+        res = requests.get(url_user, timeout=(3.0, 7.5))
+        try:
+            res.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            if res.status_code == 404:
+                if is_first_page:
+                    sys.exit('Username not found')
+                break
+            elif res.status_code != 200:
+                sys.exit('Connection error: ' + str(res.status_code))
+        except requests.exceptions.Timeout as e:
+            sys.exit('Timeout error')
+
+        is_first_page = False
+
         soup = BeautifulSoup(res.text, 'html.parser')
-        if is_first_page:
-            status = soup.find('p', class_='main__status')
-            if status is not None:
-                if status.text == '404 Not Found':
-                    print('Username not found')
-                    exit()
-            is_first_page = False
-        if exist_review(soup):
-            content_set = soup.find_all('div', class_='c-content-card')
-            for content_card in content_set:
-                info = get_information(content_card)
-                info_all.append(info)
-                print_info(info)
-        else:
-            break
+        content_set = soup.find_all('div', class_='c-content-card')
+        for content_card in content_set:
+            info = get_information(content_card)
+            info_all.append(info)
+            print_info(info)
         i += 1
         url_user = 'https://filmarks.com/users/' + user_name + '?page=' + str(i)
 
