@@ -49,11 +49,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get reviews from filmarks',
                                      usage='python3 fil.py -u <username> [-n]')
     parser.add_argument('-n', '--no-asking', help='ask nothing', action='store_true')
-    parser.add_argument('-u', '--username', help='username', required=True)
+    parser.add_argument('-u', '--username', help='username', nargs=1)
     args = parser.parse_args()
 
     if args.username is not None:
-        user_name = args.username
+        user_name = args.username[0]
     else:
         user_name = input('Username: ')
     url_user = 'https://filmarks.com/users/' + user_name
