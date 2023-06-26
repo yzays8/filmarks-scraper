@@ -30,7 +30,7 @@ def get_information(content_card):
 
     return info_dict
 
-def print_info(info_dict):
+def print_info(info):
     print('Title: ' + info['title'])
     if info['rate'] == -1:
         print('Rate: -')
