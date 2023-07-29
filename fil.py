@@ -47,7 +47,7 @@ def sort_rate(info_all: list) -> list:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get reviews from filmarks',
-                                     usage='python3 fil.py -u <username> [-n]')
+                                     usage='python3 fil.py [-u <username>] [-n]')
     parser.add_argument('-n', '--no-asking', help='ask nothing', action='store_true')
     parser.add_argument('-u', '--username', help='username', nargs='?')
     args = parser.parse_args()
