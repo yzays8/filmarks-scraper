@@ -16,8 +16,8 @@ def get_info(content_card: Tag) -> Dict[str, str]:
     info: Dict[str, str] = {}
 
     if is_long_review(content_card):
-        url_moreReview = 'https://filmarks.com' + content_card.find('span', class_='c-content-card__readmore-review').find('a').get('href')
-        content_more = BeautifulSoup(requests.get(url_moreReview).text, 'html.parser')
+        url_more_review = 'https://filmarks.com' + content_card.find('span', class_='c-content-card__readmore-review').find('a').get('href')
+        content_more = BeautifulSoup(requests.get(url_more_review).text, 'html.parser')
         title_str: str = content_more.find('div', class_='p-timeline-mark__title').text
         match = re.search(r'(.+)\(([0-9]+)[^0-9]+\)', title_str)
         info['title'] = match.group(1)
@@ -61,7 +61,7 @@ def sort_rate(info_all: List[Dict[str, str]]) -> List[Dict[str, str]]:
     return sorted(info_all, key=lambda x: x['rate'])
 
 def scrape(user_name: str) -> List[Dict[str, str]]:
-    url_user = 'https://filmarks.com/users/' + user_name
+    url_user = f'https://filmarks.com/users/{user_name}'
     info_all: List[Dict[str, str]] = []
     is_first_page = True
     i = 1
@@ -87,5 +87,5 @@ def scrape(user_name: str) -> List[Dict[str, str]]:
             info = get_info(content_card)
             info_all.append(info)
         i += 1
-        url_user = 'https://filmarks.com/users/' + user_name + '?page=' + str(i)
+        url_user = f'https://filmarks.com/users/{user_name}?page={str(i)}'
     return info_all
