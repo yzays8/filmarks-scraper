@@ -2,16 +2,10 @@
 
 ## About
 
-Get movie reviews written by a specific user on [Filmarks](https://filmarks.com/) and sort them by rating if you want.
+This is a [Filmarks](https://filmarks.com/) scraper to get movie reviews written by a specific user.
 
 ## Usage
 
 ```sh
-python3 fil.py
-```
-
-To utilize the data:
-
-```sh
-python3 fil.py -n -u user_name > output.txt
+run.sh [-u <username>] [-n]
 ```
