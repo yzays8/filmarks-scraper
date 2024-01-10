@@ -12,7 +12,7 @@ def is_long_review(content_card: Tag) -> bool:
         return False
     return True
 
-def get_information(content_card: Tag) -> Dict[str, str]:
+def get_info(content_card: Tag) -> Dict[str, str]:
     info: Dict[str, str] = {}
 
     if is_long_review(content_card):
@@ -84,7 +84,7 @@ def scrape(user_name: str) -> List[Dict[str, str]]:
         soup = BeautifulSoup(res.text, 'html.parser')
         content_set: ResultSet[Tag] = soup.find_all('div', class_='c-content-card')
         for content_card in content_set:
-            info = get_information(content_card)
+            info = get_info(content_card)
             info_all.append(info)
         i += 1
         url_user = 'https://filmarks.com/users/' + user_name + '?page=' + str(i)
