@@ -9,5 +9,5 @@ if [ ! -d "$VENV_DIR" ]; then
 fi
 
 source "$VENV_DIR/bin/activate"
-python3 src/main.py
+python3 src/main.py "$@"
 deactivate
