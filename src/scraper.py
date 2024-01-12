@@ -23,9 +23,9 @@ def get_info(content_card: Tag) -> Dict[str, str]:
         info['title'] = match.group(1)
         info['year'] = match.group(2)
         if (temp := content_more.find('div', class_='c-rating__score').text) == '-':
-            info['rate'] = -1
+            info['rate'] = str(-1)
         else:
-            info['rate'] = float(temp)
+            info['rate'] = str(float(temp))
         info['review'] = content_more.find('div', class_='p-mark__review').text
     else:
         title_str = content_card.find('h3', class_='c-content-card__title').text
@@ -33,9 +33,9 @@ def get_info(content_card: Tag) -> Dict[str, str]:
         info['title'] = match.group(1)
         info['year'] = match.group(2)
         if (temp := content_card.find('div', class_='c-rating__score').text) == '-':
-            info['rate'] = -1
+            info['rate'] = str(-1)
         else:
-            info['rate'] = float(temp)
+            info['rate'] = str(float(temp))
         info['review'] = content_card.find('p', class_='c-content-card__review').text
 
     assert info['title'] is not None
@@ -45,17 +45,17 @@ def get_info(content_card: Tag) -> Dict[str, str]:
 
     return info
 
-def print_info(info: List[Dict[str, str]]) -> None:
-    print('Title: ' + info['title'])
-    print('Year: ' + info['year'])
-    if info['rate'] == -1:
+def print_info(info: Dict[str, str]) -> None:
+    print(f'Title: {info["title"]}')
+    print(f'Year: {info["year"]}')
+    if info['rate'] == '-1':
         print('Rate: -')
     else:
-        print('Rate: ' + str(info['rate']))
+        print(f'Rate: {info["rate"]}')
     if info['review'] == '':
         print('Review: -\n')
     else:
-        print('Review: ' + info['review'] + '\n')
+        print(f'Review: {info["review"]}\n')
 
 def sort_rate(info_all: List[Dict[str, str]]) -> List[Dict[str, str]]:
     return sorted(info_all, key=lambda x: x['rate'])
@@ -75,7 +75,7 @@ def scrape(user_name: str) -> List[Dict[str, str]]:
                     sys.exit('Username not found')
                 break
             elif res.status_code != 200:
-                sys.exit('Connection error: ' + str(res.status_code))
+                sys.exit(f'Connection error: {str(res.status_code)}')
         except requests.exceptions.Timeout as e:
             sys.exit('Timeout error')
 

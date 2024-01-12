@@ -12,22 +12,22 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    if args.username is not None:
-        user_name = args.username
-    else:
+    if args.username is None:
         user_name = input('Username: ')
+    else:
+        user_name = args.username
 
-    want_sort = False
+    require_sort = False
     if args.no_asking is False:
         while True:
             if (want_sort := input('Do you want to sort reviews by rate? y/n: ')).lower() in ['y', 'yes']:
-                want_sort = True
+                require_sort = True
                 break
             elif want_sort.lower() in ['n', 'no']:
                 break
 
     info_all = scrape(user_name)
-    if want_sort:
+    if require_sort:
         info_all = sort_rate(info_all)
 
     for info in info_all:
