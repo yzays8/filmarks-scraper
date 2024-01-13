@@ -7,5 +7,5 @@ This is a [Filmarks](https://filmarks.com/) scraper to get movie reviews written
 ## Usage
 
 ```sh
-run.sh [-u <username>] [-n]
+bash run.sh [-u <username>] [-n]
 ```
