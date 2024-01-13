@@ -4,6 +4,7 @@ import sys
 
 from typing import Dict, List
 
+from toolz import pipe
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet, Tag
 
@@ -26,10 +27,12 @@ def get_info(content_card: Tag) -> Dict[str, str]:
             info['rate'] = str(-1)
         else:
             info['rate'] = str(float(temp))
-        info['review'] = re \
-                        .search(r'<div class="p-mark__review">(.+)</div>', str(content_more.find('div', class_='p-mark__review'))) \
-                        .group(1) \
-                        .replace('<br/>', '\n')
+        info['review'] = pipe(str(content_more.find('div', class_='p-mark__review')),
+                                lambda x: re.search(r'<div class="p-mark__review">(.+)</div>', x),
+                                lambda x: x.group(1),
+                                lambda x: re.sub(r'<ul class="p-timeline-mark__tags"><li><a href=".+".*>(.+)</a></li></ul>', r'\1', x), # hashtag
+                                lambda x: x.replace('<br/>', '\n'),                                                                     # new line
+                            )
     else:
         title_str = content_card.find('h3', class_='c-content-card__title').text
         m = re.search(r'(.+)\(([0-9]+)[^0-9]+\)', title_str)
@@ -39,11 +42,12 @@ def get_info(content_card: Tag) -> Dict[str, str]:
             info['rate'] = str(-1)
         else:
             info['rate'] = str(float(temp))
-        info['review'] = re \
-                        .search(r'<p class="c-content-card__review"><span>(.*)</span></p>', str(content_card.find('p', class_='c-content-card__review'))) \
-                        .group(1) \
-                        .replace('<br/>', '\n') \
-
+        info['review'] = pipe(str(content_card.find('p', class_='c-content-card__review')),
+                                lambda x: re.search(r'<p class="c-content-card__review"><span>(.*)</span></p>', x),
+                                lambda x: x.group(1),
+                                lambda x: re.sub(r'<ul class="p-timeline-mark__tags"><li><a href=".+".*>(.+)</a></li></ul>', r'\1', x), # hashtag
+                                lambda x: x.replace('<br/>', '\n')                                                                      # new line
+                            )
     return info
 
 def print_info(info: Dict[str, str]) -> None:
