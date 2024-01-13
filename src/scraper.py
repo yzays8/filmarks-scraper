@@ -19,29 +19,30 @@ def get_info(content_card: Tag) -> Dict[str, str]:
         url_more_review = 'https://filmarks.com' + content_card.find('span', class_='c-content-card__readmore-review').find('a').get('href')
         content_more = BeautifulSoup(requests.get(url_more_review).text, 'html.parser')
         title_str: str = content_more.find('div', class_='p-timeline-mark__title').text
-        match = re.search(r'(.+)\(([0-9]+)[^0-9]+\)', title_str)
-        info['title'] = match.group(1)
-        info['year'] = match.group(2)
+        m = re.search(r'(.+)\(([0-9]+)[^0-9]+\)', title_str)
+        info['title'] = m.group(1)
+        info['year'] = m.group(2)
         if (temp := content_more.find('div', class_='c-rating__score').text) == '-':
             info['rate'] = str(-1)
         else:
             info['rate'] = str(float(temp))
-        info['review'] = content_more.find('div', class_='p-mark__review').text
+        info['review'] = re \
+                        .search(r'<div class="p-mark__review">(.+)</div>', str(content_more.find('div', class_='p-mark__review'))) \
+                        .group(1) \
+                        .replace('<br/>', '\n')
     else:
         title_str = content_card.find('h3', class_='c-content-card__title').text
-        match = re.search(r'(.+)\(([0-9]+)[^0-9]+\)', title_str)
-        info['title'] = match.group(1)
-        info['year'] = match.group(2)
+        m = re.search(r'(.+)\(([0-9]+)[^0-9]+\)', title_str)
+        info['title'] = m.group(1)
+        info['year'] = m.group(2)
         if (temp := content_card.find('div', class_='c-rating__score').text) == '-':
             info['rate'] = str(-1)
         else:
             info['rate'] = str(float(temp))
-        info['review'] = content_card.find('p', class_='c-content-card__review').text
-
-    assert info['title'] is not None
-    assert info['year'] is not None
-    assert info['rate'] is not None
-    assert info['review'] is not None
+        info['review'] = re \
+                        .search(r'<p class="c-content-card__review"><span>(.*)</span></p>', str(content_card.find('p', class_='c-content-card__review'))) \
+                        .group(1) \
+                        .replace('<br/>', '\n') \
 
     return info
 
@@ -55,7 +56,7 @@ def print_info(info: Dict[str, str]) -> None:
     if info['review'] == '':
         print('Review: -\n')
     else:
-        print(f'Review: {info["review"]}\n')
+        print(f'Review: \n{info["review"]}\n')
 
 def sort_rate(info_all: List[Dict[str, str]]) -> List[Dict[str, str]]:
     return sorted(info_all, key=lambda x: x['rate'])
