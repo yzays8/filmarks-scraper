@@ -56,7 +56,7 @@ def print_info(info: Dict[str, str]) -> None:
     if info['review'] == '':
         print('Review: -\n')
     else:
-        print(f'Review: \n{info["review"]}\n')
+        print(f'Review:\n{info["review"]}\n')
 
 def sort_rate(info_all: List[Dict[str, str]]) -> List[Dict[str, str]]:
     return sorted(info_all, key=lambda x: x['rate'])

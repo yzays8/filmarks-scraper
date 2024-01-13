@@ -20,10 +20,10 @@ def main() -> None:
     require_sort = False
     if args.no_asking is False:
         while True:
-            if (want_sort := input('Do you want to sort reviews by rate? y/n: ')).lower() in ['y', 'yes']:
+            if (want_sort := input('Do you want to sort reviews by rate? y/n: ').lower()) in ['y', 'yes']:
                 require_sort = True
                 break
-            elif want_sort.lower() in ['n', 'no']:
+            elif want_sort in ['n', 'no']:
                 break
 
     info_all = scrape(user_name)
