@@ -1,4 +1,4 @@
-# filmarks-crawler
+# filmarks-scraper
 
 ## About
 
